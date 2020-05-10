@@ -108,11 +108,21 @@ const clubPrompts = {
     //   ...etc
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = clubs.reduce((acc, club) => {
+        club.members.forEach(member => {
+        if (!acc[member]) {
+          acc[member] = []
+        }
+        acc[member].push(club.club)
+      })
+      return acc
+    }, {});
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    //  We will take an array of objects with a two key value pairs, of club, and members.
+    //  We will create an object with keys as names, and their corresponding values being an
+    //  array of the clubs they're members of.
   }
 };
 
@@ -144,11 +154,19 @@ const modPrompts = {
     //   { mod: 4, studentsPerInstructor: 8 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    const result = mods
+      .map(function(element) {
+        return {
+          mod: element.mod,
+          studentsPerInstructor: (element.students / element.instructors)
+        }
+      });
+      return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We are going to take in an array of objects
+    // We are going to return a new array og objects, in which
+    // the new array has a key value pair of the mod, and the studentsPerInstructor
   }
 };
 
