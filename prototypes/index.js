@@ -197,11 +197,19 @@ const cakePrompts = {
     //    ..etc
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.map(function(cake) {
+     return {
+      flavor: cake.cakeFlavor,
+      inStock: cake.inStock
+     }
+    });
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We are going to take in an array of objects,
+    // we are going to map over the dataset
+    // we are going to return a new array with two key value pairs,
+    // the first key value being flavor, the second, the amount inStock
   },
 
   onlyInStock() {
@@ -225,11 +233,15 @@ const cakePrompts = {
     // ..etc
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes
+    .filter(cake => cake.inStock > 0);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We are going to take in an array of objects,
+    // we are going to filter through the array to
+    // find only the cakes in stock and return an
+    // array of only the cakes in stock.
   },
 
   totalInventory() {
