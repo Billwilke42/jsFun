@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const scope = {
   exerciseA() {
     let personA = 'Paul';
