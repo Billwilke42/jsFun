@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const { kitties } = require('./datasets/kitties');
 const { clubs } = require('./datasets/clubs');
 const { mods } = require('./datasets/mods');
@@ -264,11 +266,21 @@ const cakePrompts = {
     // every cake in the dataset e.g.
     // ['dutch process cocoa', 'toasted sugar', 'smoked sea salt', 'berries', ..etc]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes
+    .reduce((acc, cake) => {
+    cake.toppings.forEach(topping => {
+      if (!acc.includes(topping)) {
+      acc.push(topping)
+      }
+    })
+    return acc
+  }, [])
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We will take in an array of objects
+    // We will iterate over the toppings and return an array
+    // of all the unique toppings, no duplicates.
   },
 
   groceryList() {
@@ -282,11 +294,24 @@ const cakePrompts = {
     //    ...etc
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes
+    .reduce((acc, cake) => {
+      cake.toppings.forEach(topping => {
+        if(!acc[topping]) {
+        acc[topping] = 1;
+      } else {
+        acc[topping]++
+        }
+      })
+      return acc
+    }, {});
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We will take in an array of objects
+    // We will return an object where the keys are toppings, and
+    // the values are how many are needed
+
   }
 };
 
@@ -317,11 +342,15 @@ const classPrompts = {
     //   { roomLetter: 'G', program: 'FE', capacity: 29 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = classrooms
+    .filter(classes => classes.program === 'FE');
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We will take an array of objects
+    // We will create a new array of objects that is just the fe classes
+    // has a roomLetter, program, and, capacity keys.
+
   },
 
   totalCapacities() {
@@ -332,21 +361,37 @@ const classPrompts = {
     //   beCapacity: 96
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = classrooms.reduce((acc, classrooms) => {
+      
+        if(classrooms.program === 'FE') {
+        acc.feCapacity += classrooms.capacity;
+        } else {
+        acc.beCapacity += classrooms.capacity;
+        
+      }
+      return acc
+    }, {
+      feCapacity: 0,
+      beCapacity: 0
+    })
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We will take in an array of objects, and reduce it to an object with a key value pair,
+    // of the FE and BE capacity.
   },
 
   sortByCapacity() {
     // Return the array of classrooms sorted by their capacity (least capacity to greatest)
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = classrooms
+    .sort((a, b) => a.capacity - b.capacity);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We will take in an array of classrooms
+    // We will return an array of classrooms sorted by their capacity from
+    // lowest to hightest
   }
 };
 
@@ -369,27 +414,46 @@ const bookPrompts = {
     //   'Catch-22', 'Treasure Island']
 
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+  let bookTitles = [];
+   const result = books
+   .filter(book => {
+     if(book.genre !== 'Horror' && book.genre !== 'True Crime') {
+      bookTitles.push(book.title)
+     }
+   })
+
+   return bookTitles;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We will take an array of objects and filter the books that
+    // are not horror or true crime, returning an array of remaining books names.
 
   },
-  getNewBooks() {
+
+   getNewBooks() {
     // return an array of objects containing all books that were
     // published in the 90's and 00's. Inlucde the title and the year Eg:
 
     // [{ title: 'Harry Potter and the Sorcerer\'s Stone', year: 1997 },
     //  { title: 'Life of Pi', year: 2001 },
     //  { title: 'The Curious Incident of the Dog in the Night-Time', year: 2003 }]
-
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+   
+    const result = books
+      .filter(book => book.published >= 1990)
+      .map(newBooks => {
+        return { 
+        title: newBooks.title,
+        year: newBooks.published
+      }
+    })
     return result;
 
-    // Annotation:
-    // Write your annotation here as a comment
-  }
+    // // Annotation:
+    // // We will take in an array of objects
+    // // We will filter through the array to find all the books published in the
+    // // 90's and 2000's. We will then map over that array and make a new array of object with
+    // // just the books title and year/
+   }
 
 };
 
@@ -407,11 +471,16 @@ const weatherPrompts = {
     // return an array of all the average temperatures. Eg:
     // [ 40, 40, 44.5, 43.5, 57, 35, 65.5, 62, 14, 46.5 ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = weather
+    .map(location => {
+      return (location.temperature['high'] + location.temperature['low']) / 2
+      }
+    );
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // I will take in an array of objects and map over the data's high and low temperaturs and return an array of
+    // average temperatures.
   },
 
   findSunnySpots() {
@@ -421,11 +490,17 @@ const weatherPrompts = {
     // 'New Orleans, Louisiana is sunny.',
     // 'Raleigh, North Carolina is mostly sunny.' ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = weather
+    .filter(location => location.type === 'sunny' || location.type === 'mostly sunny')
+    .map(sunnyLocations => {
+      return `${sunnyLocations.location} is ${sunnyLocations.type}.`
+    });
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // I am going to take in an array of objects, filter over the data to find the locations
+    // that are sunny or mostly sunny. I am going to map over that data and create a new array
+    // of strings.
   },
 
   findHighestHumidity() {
@@ -437,11 +512,12 @@ const weatherPrompts = {
     //   temperature: { high: 49, low: 38 }
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = 'Replace with result';
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We will take in an array of objects that we will filter through to find the location
+    // with the highest humidity;./* eslint-disable */
 
   }
 };
@@ -464,11 +540,23 @@ const nationalParksPrompts = {
     //   parksVisited: ["Rocky Mountain", "Acadia", "Zion"]
     //}
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    const result = nationalParks.reduce((acc, park) => {
+      if (park.visited === false) {
+        acc.parksToVisit.push(park.name)
+      } else {
+      acc.parksVisited.push(park.name)
+    }
+    return acc
+  }, {
+    parksToVisit: [],
+    parksVisited: []
+  });
+  return result;
+  
 
     // Annotation:
-    // Write your annotation here as a comment
+    // I will take in an array of objects and reduce them to an object with keys of parksToVisit, and 
+    // parksVisited, each with a key value of an array of the park names. 
   },
 
   getParkInEachState() {
@@ -481,7 +569,13 @@ const nationalParksPrompts = {
     // { Florida: 'Everglades' } ]
 
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = nationalParks
+    .map(park => {
+      return {
+        location: park.name
+      }
+    })
+    console.log(result)
     return result;
 
     // Annotation:
@@ -504,11 +598,20 @@ const nationalParksPrompts = {
     //   'backpacking',
     //   'rock climbing' ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    const result = nationalParks
+    .reduce((acc, park) => {
+      park.activities.forEach(activity => {
+        if (!acc.includes(activity)) {
+        acc.push(activity)
+        }
+      })
+      return acc
+    }, [])
+      return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We will take in an array of objects that we will reduce their activities to 
+    // an array of all available activities.
   }
 };
 
