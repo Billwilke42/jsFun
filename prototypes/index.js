@@ -512,12 +512,14 @@ const weatherPrompts = {
     //   temperature: { high: 49, low: 38 }
     // }
 
-    const result = 'Replace with result';
+    const result = weather
+    .sort((a, b) => b.humidity - a.humidity)[0]
+    
     return result;
 
     // Annotation:
     // We will take in an array of objects that we will filter through to find the location
-    // with the highest humidity;./* eslint-disable */
+    // with the highest humidity;
 
   }
 };
@@ -572,10 +574,9 @@ const nationalParksPrompts = {
     const result = nationalParks
     .map(park => {
       return {
-        location: park.name
+        [park.location] : park.name
       }
-    })
-    console.log(result)
+    });
     return result;
 
     // Annotation:
@@ -634,11 +635,16 @@ const breweryPrompts = {
     // Return the total beer count of all beers for every brewery e.g.
     // 40
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = breweries
+    .reduce((acc, brewery) => {
+      acc += brewery.beers.length
+      return acc
+    }, 0);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We will take in an array of objects, and reduce them to single value of the
+    // amount of beers all the breweries have.
   },
 
   getBreweryBeerCount() {
@@ -650,11 +656,18 @@ const breweryPrompts = {
     // ...etc.
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = breweries
+    .map(element => {
+      return {
+        name: element.name,
+        beerCount: element.beers.length
+      }
+    });
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We will take in an array of objects, and iterate over each brewery and return
+    // an object containing its name, and its beer count.
   },
 
   findHighestAbvBeer() {
@@ -662,7 +675,13 @@ const breweryPrompts = {
     // e.g.
     // { name: 'Barrel Aged Nature\'s Sweater', type: 'Barley Wine', abv: 10.9, ibu: 40 }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = breweries
+    .reduce((acc, brewery) => {
+      brewery.beers.forEach(beer => {
+        acc.push(beer)
+      })
+      return acc
+    }, []).sort((a, b) => b.abv - a.abv)[0]
     return result;
 
     // Annotation:
@@ -710,11 +729,23 @@ const turingPrompts = {
     //  { name: 'Robbie', studentCount: 18 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = instructors.map(instructor => {
+      const teacher = {
+        name: instructor.name,
+      }
+      cohorts.forEach(cohort => {
+        if(instructor.module === cohort.module) {
+          teacher.studentCount = cohort.studentCount
+        }
+      })
+      return teacher
+    })
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We will take in two arrays of objects, and map over the instructors data, to return an object key
+    // value of the instructor name. Then we will say for each cohort module thats the same as the teacher
+    // module and assign them a key value pair of studentCount to the cohorts student count.
   },
 
   studentsPerInstructor() {
@@ -723,18 +754,24 @@ const turingPrompts = {
     // cohort1806: 9,
     // cohort1804: 10.5
     // }
-
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    
+    const result = cohorts
+    .reduce((acc, cohort) => {
+      acc[`cohort${cohort.cohort}`] = cohort.studentCount / instructors.filter(instructor => 
+          instructor.module === cohort.module).length
+      return acc
+    }, {})
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We will take in an array of objects, and assign each cohort to a key of an object literal.
+    // and assign the value to how many student per teacher there our in each cohort.
   },
 
   modulesPerTeacher() {
     // Return an object where each key is an instructor name and each value is
     // an array of the modules they can teach based on their skills. e.g.:
-    // {
+    //  {
     //     Pam: [2, 4],
     //     Brittany: [2, 4],
     //     Nathaniel: [2, 4],
@@ -745,8 +782,20 @@ const turingPrompts = {
     //     Christie: [1, 2, 3, 4],
     //     Will: [1, 2, 3, 4]
     //   }
-
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    
+    const result = instructors
+    .reduce((acc, teacher) => {
+      const arr = []
+      teacher.teaches.forEach(skill => {
+        cohorts.forEach(cohort => {
+          if (cohort.curriculum.includes(skill) && !arr.includes(cohort.module)) {
+            arr.push(cohort.module)
+          }
+        })
+      })
+      acc[teacher.name] = arr.sort((a, b) => a - b);
+      return acc
+    }, {})
     return result;
 
     // Annotation:
