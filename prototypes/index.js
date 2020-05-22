@@ -812,11 +812,22 @@ const turingPrompts = {
     //   recursion: [ 'Pam', 'Leta' ]
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    // const result = cohorts
+    // .reduce((acc, cohort) => {
+    //   const arr = []
+    //   cohort.curriculum.forEach((lesson => {
+    //     instructors.forEach(teacher => {
+    //       if (teacher.teac)
+    //     })
+    //     acc[]
+    //   }), {})
+    // });
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We will take in an array of objects, and we will create an object instance
+    // with a key of the cohort curriculum, and we will assign the values of the teachers that can
+    // teach that skill in an array.
   }
 };
 
@@ -846,12 +857,28 @@ const bossPrompts = {
     //   { bossName: 'Ursula', sidekickLoyalty: 20 },
     //   { bossName: 'Scar', sidekickLoyalty: 16 }
     // ]
-
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    let bossValues = Object.values(bosses)
+    const result = bossValues
+      .map(boss => boss.name)
+      .reduce((acc, boss) => {
+        let sidekickObj = {
+          bossName: boss,
+          sidekickLoyalty: 0
+        };
+          sidekicks.forEach(sidekick => {
+            if(boss === sidekick.boss) {
+              sidekickObj.sidekickLoyalty += sidekick.loyaltyToBoss
+            }
+          })
+          acc.push(sidekickObj)
+          return acc
+        }, [])
+      
+      return result;
+          
 
     // Annotation:
-    // Write your annotation here as a comment
+    // we will take the values of the bosses object. 
   }
 };
 
@@ -888,12 +915,23 @@ const astronomyPrompts = {
     //     lightYearsFromEarth: 640,
     //     color: 'red' }
     // ]
-
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    let constellationKeys = Object.keys(constellations)
+    const result = stars
+    .filter(star => {
+      let starObj;
+      constellationKeys.forEach(key => {
+        if(constellations[key].stars.includes(star.name)) {
+          starObj = star
+        }
+      })
+      return starObj
+    })
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We will take in an array of objects, and iterate over the array of
+    // objects pulling the star name and assigning its corresponding values from
+    // the stars array.
   },
 
   starsByColor() {
@@ -907,11 +945,21 @@ const astronomyPrompts = {
     //   red: [{obj}]
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = stars
+      .reduce((starsByColorObject, star) => {
+        if(!starsByColorObject[star.color]) {
+          starsByColorObject[star.color] = []
+        }
+        starsByColorObject[star.color].push(star)
+        return starsByColorObject
+      }, {})
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // we will take in an array of objects, and use a reduce to assign the star objects to 
+    // the key of its color value. If the key already exists it will add the
+    // object to the value of its corresponding key, if it does not, it will
+    // create that color key.
   },
 
   constellationsStarsExistIn() {
@@ -929,11 +977,15 @@ const astronomyPrompts = {
     //    "The Little Dipper" ]
 
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = stars
+      .sort((a, b) => a.visualMagnitude - b.visualMagnitude)
+      .filter(star => star.constellation !== "")
+      .map(star => star.constellation)
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We will take in an array of star objects and sort the stars by the visualMagnitude
+    // we will then return an array of the constellations names from the brightest
   }
 };
 
